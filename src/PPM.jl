@@ -3,8 +3,8 @@ module PPM
 export Sequence, PPMSimple, PPMDecay
 export modelseq!
 
-using Distributions: Distribution, Univariate, Continuous, Normal
-using Random: AbstractRNG, MersenneTwister
+import Distributions: Distribution, Univariate, Continuous, Normal
+import Random: AbstractRNG, MersenneTwister
 
 
 Sequence = Vector{Integer}
