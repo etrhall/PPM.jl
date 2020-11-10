@@ -298,7 +298,7 @@ symbol, conditioned on the preceding symbols.
 """
 function modelseq!(
     ppm::AbstractPPM,
-    x::Sequence,
+    x::Sequence;
     time::Vector{Float64} = Float64[],
     train::Bool = true,
     predict::Bool = true,
@@ -311,6 +311,9 @@ function modelseq!(
     end
     if length(ppm.alltime) > 0 && length(time) > 0 && time[1] < ppm.alltime[end]
         error("a sequence may not begin before the previous sequence finished")
+    end
+    if any(diff(time) .< 0)
+        error("decreasing values of time are not permitted")
     end
 
     result = SequencePrediction(returndistribution, returnentropy, ppm.decay)
