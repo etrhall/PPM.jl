@@ -60,7 +60,7 @@ Returns a PPM model object.
 These objects have reference semantics.
 """
 function newppmsimple(
-    alphabetsize::Integer,
+    alphabetsize::Integer;
     orderbound::Integer = 10,
     shortestdeterministic::Bool = true,
     exclusion::Bool = true,
@@ -236,7 +236,7 @@ Returns a PPM-decay model object.
 These objects have reference semantics.
 """
 function newppmdecay(
-    alphabetsize::Integer,
+    alphabetsize::Integer;
     orderbound::Integer = 10,
     ltmweight::Real = 1,
     ltmhalflife::Real = 10,
