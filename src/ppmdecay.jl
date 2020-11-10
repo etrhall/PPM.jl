@@ -168,7 +168,7 @@ function ppminsert!(
         model's order bound was originally specified.
         =#
         ngramlength = length(x)
-        posngrambegin = pos - ngramlength
+        posngrambegin = pos - ngramlength + 1
         timengrambegin = ppm.alltime[posngrambegin]
         if time - timengrambegin >= ppm.bufferlengthtime
             return true
@@ -393,11 +393,11 @@ end
 function aslist(ppm::PPMDecay)
     n = length(ppm.data)
     ngram = Vector{Sequence}(undef, n)
-    pos = Vector{Integer}(undef, n)
-    time = Vector{Float64}(undef, n)
+    pos = Vector{Vector{Integer}}(undef, n)
+    time = Vector{Vector{Float64}}(undef, n)
 
     i = 1
-    for (k, v) in data
+    for (k, v) in ppm.data
         ngram[i] = k
         pos[i] = v.pos
         time[i] = ppm.alltime[pos[i]]
