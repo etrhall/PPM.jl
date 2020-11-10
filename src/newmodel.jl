@@ -249,7 +249,7 @@ function newppmdecay(
     bufferlengthitems::Integer = 0,
     onlylearnfrombuffer::Bool = false,
     onlypredictfrombuffer::Bool = false,
-    seed = rand(Int),
+    seed = rand(UInt32),
     debugsmooth::Bool = false,
     debugdecay::Bool = false
 )
