@@ -9,7 +9,7 @@
 
         @test isapprox(
             mean(y),
-            1 + mod.noisemean,
+            1 + mod.noisemean;
             atol = 1e-2
         )
     end
