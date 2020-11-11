@@ -1,6 +1,34 @@
 Sequence = Vector{Integer}
 
 
+function getalphabet(x)
+    k = map(Symbol, unique(x))
+    n = length(k)
+    return (; zip(k, 1:n)...)
+end
+
+
+function assequence(x::Union{Vector, AbstractString})
+    n = length(x)
+    levels = unique(x)
+    seq = Sequence(undef, n)
+    for i in 1:n
+        seq[i] = findfirst(isequal(x[i]), levels)
+    end
+    return seq
+end
+
+
+function assequence(x::Vector, alphabet::NamedTuple)
+    return map(y->alphabet[Symbol(y)], x) |> Sequence
+end
+
+
+function assequence(x::AbstractString, alphabet::NamedTuple)
+    return map(y->alphabet[Symbol(y)], split(x, "")) |> Sequence
+end
+
+
 function subseq(x::Sequence, first::Integer, last::Integer)
     if last > length(x) || last < first
         error("invalid subsequence indices")
