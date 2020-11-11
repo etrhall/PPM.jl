@@ -61,7 +61,7 @@ struct SequencePrediction
             Int[],
             Int[],
             Float64[],
-            Vector[Float64[]]
+            Vector{Vector{Float64}}()
         )
     end
 end
