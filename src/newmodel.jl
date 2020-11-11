@@ -66,7 +66,7 @@ function newppmsimple(
     exclusion::Bool = true,
     updateexclusion::Bool = true,
     escape::AbstractString = "c",
-    debugsmooth::Bool = true
+    debugsmooth::Bool = false
 )
     validescapemethods = ("a", "b", "c", "d", "ax")
     if escape ∉ validescapemethods

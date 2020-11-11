@@ -2,7 +2,7 @@ Sequence = Vector{Integer}
 
 
 function getalphabet(x)
-    k = map(Symbol, unique(x))
+    k = map(Symbol, unique(x)) |> sort
     n = length(k)
     return (; zip(k, 1:n)...)
 end
