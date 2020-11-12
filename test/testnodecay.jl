@@ -28,7 +28,7 @@
         for i in 1:length(seqs)
             seq = assequence(seqs[i], alphabet)
             tmp = modelseq!(model, seq)
-            res[i] = mean(tmp.informationcontent)
+            res[i] = mean(tmp["informationcontent"])
         end
         @test isapprox(res, answer; atol = tolerance)
     end
@@ -126,5 +126,125 @@
             for j in unique(file[:, 1])
         ]
         testppm(seqs, answer; updateexclusion = false)
+    end
+
+    @testset "IDyOM update exclusion" begin
+        @testset "'abracadabra' x2" begin
+            seqs = ["abracadabra", "abracadabra"]
+            answer = [2.4509745, 1.1457417]
+            testppm2(seqs, answer; updateexclusion = true)
+        end
+
+        @testset "'abracadabra' x3" begin
+            seqs = ["abracadabra", "abracadabra", "abracadabra"]
+            answer = [2.4509745, 1.1457417, 0.8534344]
+            testppm2(seqs, answer; updateexclusion = true)
+        end
+
+        @testset "'abracadabra' 'bracadabra'" begin
+            seqs = ["abracadabra", "bracadabra"]
+            answer = [2.4509745, 1.1973304]
+            testppm2(seqs, answer; updateexclusion = true)
+        end
+
+        @testset "'abracadabra' 'abrabrac'" begin
+            seqs = ["abracadabra", "abrabrac"]
+            answer = [2.4509745, 1.4018788]
+            testppm2(seqs, answer; updateexclusion = true)
+        end
+
+        @testset "'abracadabra' 'abratbrac'" begin
+            seqs = ["abracadabra", "abratbrac"]
+            answer = [2.591134, 1.8791169]
+            testppm2(seqs, answer; updateexclusion = true)
+        end
+
+        @testset "'abracadabra' 'abrabtrac'" begin
+            seqs = ["abracadabra", "abrabtrac"]
+            answer = [2.591134, 2.0285676]
+            testppm2(seqs, answer; updateexclusion = true)
+        end
+
+        @testset "'abracadabra' 'abrabrtac'" begin
+            seqs = ["abracadabra", "abrabrtac"]
+            answer = [2.591134, 1.8929263]
+            testppm2(seqs, answer; updateexclusion = true)
+        end
+
+        @testset "'abracadabra' 'abrabratc'" begin
+            seqs = ["abracadabra", "abrabratc"]
+            answer = [2.591134, 1.7575804]
+            testppm2(seqs, answer; updateexclusion = true)
+        end
+
+        @testset "'abracadabra' 'abrabract'" begin
+            seqs = ["abracadabra", "abrabract"]
+            answer = [2.591134, 1.5876032]
+            testppm2(seqs, answer; updateexclusion = true)
+        end
+    end
+
+    @testset "IDyOM PPM* with mixtures" begin
+        seqs = [
+            "abracadabrac",
+            "letlettertele",
+            "assanissimassa",
+            "mississippi",
+            "agcgacgag"
+        ]
+        for i in 1:length(seqs)
+            file = readdlm("./data/ppm-mix-$i.csv", ','; skipstart = 1)
+            answer = [[j for j in eachrow(file)]]
+            testppm([seqs[i]], answer; updateexclusion = false)
+        end
+    end
+
+    @testset "IDyOM PPM* with mixtures and update exclusion" begin
+        seqs = ["abracadabrac"]
+        for i in 1:length(seqs)
+            file = readdlm("./data/ppm-mix-ui-$i.csv", ','; skipstart = 1)
+            answer = [[j for j in eachrow(file)]]
+            testppm([seqs[i]], answer; updateexclusion = true)
+        end
+    end
+
+    @testset "IDyOM PPM with mixtures and order bound = 0, 1" begin
+        seqs = ["abracadabrac", "abracadabrac"]
+        for i in 1:length(seqs)
+            file = readdlm("./data/ppm-fix-$(i-1).csv", ','; skipstart = 1)
+            answer = [[j for j in eachrow(file)]]
+            testppm([seqs[i]], answer; orderbound = i - 1, updateexclusion = false)
+        end
+    end
+
+    @testset "Louis Couperin: unmeasured prelude, no. 7" begin
+        seqs = [[
+            45, 52, 57, 60, 64, 69, 45, 52, 57, 60, 64, 69, 45, 45, 44, 52, 60,
+            60, 59, 64, 64, 71, 45, 57, 76, 74, 72, 71, 72, 72, 72, 72, 72, 72,
+            72, 72, 52, 64, 69, 69, 71, 71, 71, 71, 71, 71, 50, 52, 54, 55, 52,
+            53, 52, 50, 48, 48, 47, 69, 71, 72, 55, 74, 62, 67, 48, 67, 69, 71,
+            57, 72, 72, 57, 64, 65, 72, 72, 72, 60, 62, 66, 71, 71, 62, 68, 66,
+            68, 64, 64, 64, 64, 59, 59, 60, 64, 68, 68, 69, 69, 50, 49, 49, 50,
+            59, 64, 64, 65, 69, 47, 48, 50, 52, 53, 50, 50, 52, 60, 64, 69, 52,
+            60, 60, 59, 69, 69, 68, 68, 68, 45, 52, 57, 61, 64, 69, 45, 52, 57,
+            62, 61, 64, 69
+        ]]
+        answer = [4.195832]
+        testppm2(seqs, answer, updateexclusion = false)
+    end
+
+    @testset "Paul Hindemith: Acht Stücke Für Flöte Allein: VI. Lied, Leicht Bewegt" begin
+        seqs = [[
+            84, 83, 85, 86, 81, 82, 81, 80, 80, 80, 79, 77, 79, 76, 83, 73, 72,
+            71, 72, 77, 76, 75, 77, 79, 80, 82, 84, 85, 87, 88, 88, 87, 82, 77,
+            78, 83, 81, 79, 77, 76, 75, 77, 78, 73, 74, 72, 71, 71, 70, 69, 68,
+            67, 68, 70, 62, 73, 74, 63, 78, 79, 92, 90, 89, 88, 88, 91, 87, 86,
+            85, 84, 83, 85, 86, 81, 82, 81, 80, 80, 80, 79, 77, 79, 76, 83, 73,
+            71, 73, 74, 74, 74, 73, 71, 73, 70, 77, 67, 68, 69, 70, 70, 68, 69,
+            70, 70, 68, 69, 70, 63, 63, 68, 66, 63, 62, 70, 63, 68, 66, 63, 62,
+            70, 63, 68, 66, 63, 62
+        ]]
+        answer = [4.210231]
+        testppm2(seqs, answer, updateexclusion = false)
     end
 end
