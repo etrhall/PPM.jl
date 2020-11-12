@@ -90,8 +90,8 @@ function aslist(a::SequencePrediction)
         push!(x, "pos" => a.pos)
         push!(x, "time" => a.time)
     end
-    push!(x, "model_order" => a.modelorder)
-    push!(x, "information_content" => a.informationcontent)
+    push!(x, "modelorder" => a.modelorder)
+    push!(x, "informationcontent" => a.informationcontent)
     if a.returnentropy
         push!(x, "entropy" => a.entropy)
     end
