@@ -211,15 +211,10 @@ function getnumobservedsymbols(
     pos::Integer,
     time::AbstractFloat
 )
-    res = 0
-    for i in 1:ppm.alphabetsize
-        symbol = Sequence([i])
-        weight = getweight(ppm, symbol, pos, time, false)
-        if weight > 0.0
-            res += 1
-        end
-    end
-    return res
+    return count(
+        x->getweight(ppm, Sequence([x]), pos, time, false) > 0.0,
+        1:ppm.alphabetsize
+    )
 end
 
 
@@ -228,13 +223,7 @@ function getcontextcount(
     counts::Vector{Float64},
     excluded::Vector{Bool}
 )
-    contextcount = 0.0
-    for i in 1:ppm.alphabetsize
-        if !excluded[i]
-            contextcount += counts[i]
-        end
-    end
-    return contextcount
+    return sum(counts[.!excluded])
 end
 
 
@@ -360,8 +349,7 @@ function predictsymbol(
     modelorder = getmodelorder(ppm, context, pos, time)
     dist = getprobabilitydistribution(ppm, context, modelorder, pos, time)
 
-    out = SymbolPrediction(symbol, pos, time, modelorder.chosen, dist)
-    return out
+    return SymbolPrediction(symbol, pos, time, modelorder.chosen, dist)
 end
 
 
@@ -512,7 +500,24 @@ function getalphas(
         res = zeros(Float64, ppm.alphabetsize)
         return res
     end
+end
 
+function getalphas(
+    ppm::AbstractPPM,
+    lambda::AbstractFloat,
+    counts::Vector{Float64},
+    contextcount::AbstractFloat
+)
+    if lambda > 0
+        res = zeros(Float64, ppm.alphabetsize)
+        for i in 1:ppm.alphabetsize
+            res[i] = lambda * counts[i] / contextcount
+        end
+        return res
+    else
+        res = zeros(Float64, ppm.alphabetsize)
+        return res
+    end
 end
 
 
@@ -633,16 +638,7 @@ function lambdaax(
 end
 
 
-function numsingletons(x::Vector{Float64})
-    n = length(x)
-    res = 0
-    for i in 1:n
-        if x[i] > 0 && x[i] <= 1
-            res += 1
-        end
-    end
-    return res
-end
+numsingletons(x::Vector{Float64}) = count(y->(0 < y <= 1), x)
 
 
 function modifycount(ppm::AbstractPPM, count::AbstractFloat)
@@ -659,16 +655,7 @@ function modifycount(ppm::AbstractPPM, count::AbstractFloat)
 end
 
 
-function countpositivevalues(x::Vector{Float64})
-    n = length(x)
-    res = 0
-    for i in 1:n
-        if x[i] > 0
-            res += 1
-        end
-    end
-    return res
-end
+countpositivevalues(x::Vector{Float64}) = count(y->(y > 0), x)
 
 
 function getorderminus1distribution(
