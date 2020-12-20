@@ -52,3 +52,23 @@ computeentropy(x::Vector{Float64}) = sum(p->(-p * log2(p)), x)
 
 
 normalisedistribution(x::Vector{Float64}) = map(y->(y / sum(x)), x)
+
+
+function resultdf(result::SequencePrediction, display::Bool = true)
+    df = DataFrame(
+        symbol = result.symbol,
+        # position = result.pos,
+        # time = result.time,
+        model_order = result.modelorder,
+        information_content = result.informationcontent,
+        entropy = result.entropy
+    )
+    pretty_table(
+        df,
+        ["symbol", "order", "information content", "entropy"],
+        alignment = :r,
+        formatters = ft_printf("%5.4f", [5, 6]),
+        border_crayon = crayon"blue",
+        header_crayon = crayon"bold red"
+    )
+end
