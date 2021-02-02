@@ -1,6 +1,6 @@
 module PPM
 
-export Sequence, PPMSimple, PPMDecay
+export Sequence, PPMSimple, PPMDecay, SequencePrediction
 export getalphabet, assequence, newppmsimple, newppmdecay, modelseq!, getweight, getngramweights
 
 using DataFrames

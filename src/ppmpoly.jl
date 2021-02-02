@@ -67,5 +67,6 @@ function modelpoly!(
         end
     end
 
-    return [resultdf(r) for r in results]
+    # return [resultdf(r) for r in results]
+    return results
 end
