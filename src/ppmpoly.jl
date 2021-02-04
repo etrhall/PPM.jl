@@ -24,6 +24,7 @@ function modelpoly!(
         train = fill(train, nn)
     elseif length(train) != nn
         error("train must be same length as number of sequences")
+    end
 
     if isa(predict, Bool)
         predict = fill(predict, nn)
