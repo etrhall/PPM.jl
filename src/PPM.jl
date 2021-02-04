@@ -1,7 +1,7 @@
 module PPM
 
 export Sequence, PPMSimple, PPMDecay, SequencePrediction
-export getalphabet, assequence, newppmsimple, newppmdecay, modelseq!, getweight, getngramweights
+export getalphabet, assequence, newppmsimple, newppmdecay, modelseq!, modelpoly!, getweight, getngramweights
 
 using DataFrames
 using Distributions: Distribution, Univariate, Continuous, Normal
